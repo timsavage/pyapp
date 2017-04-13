@@ -58,6 +58,7 @@ import sys
 from pyapp import conf
 from pyapp import extensions
 from pyapp.conf import settings
+from pyapp.utils import autoreload
 
 logger = logging.getLogger(__name__)
 
@@ -66,7 +67,7 @@ class HandlerProxy(object):
     """
     Proxy object that wraps a handler.
     """
-    def __init__(self, handler, sub_parser):
+    def __init__(self, handler, sub_parser, supports_auto_reload):
         """
         Initialise proxy
 
@@ -76,6 +77,7 @@ class HandlerProxy(object):
         """
         self.handler = handler
         self.sub_parser = sub_parser
+        self.supports_auto_reload = supports_auto_reload
 
         # Copy details
         self.__doc__ = handler.__doc__
@@ -88,8 +90,14 @@ class HandlerProxy(object):
                 self.add_argument(*args, **kwargs)
             del handler.arguments
 
-    def __call__(self, *args, **kwargs):
-        return self.handler(*args, **kwargs)
+    def __call__(self, opts, *args, **kwargs):
+        handler = self.handler
+        if self.supports_auto_reload and opts.auto_reload:
+            # Prepend opts to args list
+            args = tuple([opts] + list(args))
+            autoreload.main(handler, args, kwargs)
+        else:
+            return handler(opts, *args, **kwargs)
 
     def add_argument(self, *args, **kwargs):
         """
@@ -158,6 +166,8 @@ class CliApplication(object):
         self.parser.add_argument('--settings', dest='settings',
                                  help='Settings to load; either a Python module or settings '
                                       'URL. Defaults to the env variable {}'.format(self.env_settings_key))
+        self.parser.add_argument('--autoreload', dest='auto_reload', action='store_true',
+                                 help='Automatically reload application on any code changes.')
         self.parser.add_argument('--nocolor', dest='no_color', action='store_true',
                                  help="Disable colour output (if colorama is installed).")
         self.parser.add_argument('--version', action='version',
@@ -207,7 +217,7 @@ class CliApplication(object):
         else:
             return "{} version {}".format(self.application_name, self.application_version)
 
-    def command(self, handler=None, cli_name=None):
+    def command(self, handler=None, cli_name=None, supports_auto_reload=False):
         """
         Decorator for registering handlers.
 
@@ -216,6 +226,7 @@ class CliApplication(object):
         :param handler: Handler function
         :param cli_name: Optional name to use for CLI; defaults to the
             function name.
+        :param supports_auto_reload: This command can utilise auto-reload 
         :rtype: HandlerProxy
 
         """
@@ -229,7 +240,7 @@ class CliApplication(object):
             )
 
             # Create proxy instance
-            proxy = HandlerProxy(func, sub_parser)
+            proxy = HandlerProxy(func, sub_parser, supports_auto_reload)
             self._handlers[name] = proxy
             return proxy
 

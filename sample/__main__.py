@@ -26,5 +26,19 @@ def do_foo(opts):
     print(settings.FOO_MESSAGE)
 
 
+@app.register_handler(supports_auto_reload=True)
+def running(opts):
+    """
+    Perform a foo operation.
+    """
+    import time
+
+    counter = 0
+    while True:
+        print ("Loop: ", counter)
+        counter += 1
+        time.sleep(3)
+
+
 if __name__ == '__main__':
     app.dispatch()
