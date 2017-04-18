@@ -120,6 +120,18 @@ class NamedPluginFactory(FactoryMixin):
 
         return type_, kwargs
 
+    def get_definition(self, name=None):
+        """
+        Get a definition of an type and configuration values.
+
+        :param name: Named instance definition; default value is defined by the
+            ``default_name`` instance argument.
+        :returns: instance_type, kwargs pair
+
+        """
+        with self._type_definitions_lock:
+            return self._type_definitions[name or self.default_name]
+
     def create_instance(self, name=None):
         """
         Get a named instance.
@@ -129,8 +141,7 @@ class NamedPluginFactory(FactoryMixin):
         :returns: New instance of the named type.
 
         """
-        with self._type_definitions_lock:
-            instance_type, kwargs = self._type_definitions[name or self.default_name]
+        instance_type, kwargs = self.get_definition(name)
         return instance_type(**kwargs)
 
     def _register_checks(self):
