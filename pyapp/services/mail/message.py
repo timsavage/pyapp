@@ -126,7 +126,7 @@ def split_addr(addr, encoding):
     else:
         localpart = Header(addr, encoding).encode()
         domain = ''
-    return (localpart, domain)
+    return localpart, domain
 
 
 def sanitize_address(addr, encoding):
