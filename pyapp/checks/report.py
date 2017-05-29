@@ -5,13 +5,9 @@ import sys
 import textwrap
 
 from pyapp.checks.registry import registry
+from pyapp.utils import colorama
 
-try:
-    import colorama
-except ImportError:
-    colorama = None
-    COLOURS = None
-else:
+if colorama:
     from colorama import Style, Fore, Back
     COLOURS = {
         # Type: (Title, Border),

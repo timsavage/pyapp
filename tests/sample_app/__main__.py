@@ -8,6 +8,29 @@ import tests.sample_app
 app = CliApplication(tests.sample_app)
 
 
+@app.command
+def happy(opts):
+    print("=o)")
+
+
+@app.command
+def sad(opts):
+    print("=o(")
+    return -2
+
+
+@app.command
+def cheeky(opts):
+    print("=oD")
+    raise KeyboardInterrupt()
+
+
+@app.command
+def angry(opts):
+    print(">=o(")
+    raise Exception("Grrrr")
+
+
 @checks.register
 def critical_check(**_):
     return checks.Critical(

@@ -4,12 +4,9 @@ import sys
 import pprint
 
 from pyapp import conf
+from pyapp.utils import colorama
 
-try:
-    import colorama
-except ImportError:
-    colorama = None
-else:
+if colorama:
     from colorama import Style, Fore
 
 

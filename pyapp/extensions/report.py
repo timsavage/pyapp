@@ -3,12 +3,9 @@ from __future__ import print_function, unicode_literals
 import sys
 
 from pyapp.extensions.registry import registry
+from pyapp.utils import colorama
 
-try:
-    import colorama
-except ImportError:
-    colorama = None
-else:
+if colorama:
     from colorama import Style, Fore
 
 

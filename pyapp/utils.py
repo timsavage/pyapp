@@ -1,5 +1,11 @@
 from __future__ import unicode_literals
 
+# Try to load colorama
+try:
+    import colorama
+except ImportError:
+    colorama = None
+    
 
 def is_iterable(obj):
     """
