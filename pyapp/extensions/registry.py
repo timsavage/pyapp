@@ -51,7 +51,7 @@ class Extension(object):
 
     @cached_property
     def name(self):
-        return self.module.__name__
+        return getattr(self.module, '__package_name__', self.module.__name__)
 
     @cached_property
     def version(self):

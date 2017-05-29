@@ -13,6 +13,7 @@ Enable debug mode
 
 ###############################################################################
 # Extensions
+
 EXT = []
 """
 List of extensions currently in use. Will cause pyapp to import any checks,
@@ -25,6 +26,14 @@ Should be a list of modules to import eg::
         'my_custom_extension',
     )
     
+"""
+
+LOAD_PKG_RESOURCES_EXT = True
+"""
+Load extensions from pkg_resources entry points.
+
+This allows for extensions to become available simply by installing them.
+
 """
 
 ###############################################################################
