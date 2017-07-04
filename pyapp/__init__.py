@@ -14,6 +14,8 @@ import os
 
 from pkg_resources import get_distribution, DistributionNotFound
 
+# Declare name spaces
+__import__('pkg_resources').declare_namespace('pyapp.ext')
 
 # Configure a default null handler for logging.
 logging.getLogger(__name__).addHandler(logging.NullHandler())
